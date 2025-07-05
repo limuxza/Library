@@ -1,0 +1,108 @@
+local Linux = {}
+
+function Linux.Create(config)
+    local player = game.Players.LocalPlayer
+    local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+    gui.Name = config.Name or "LinuxUI"
+
+    local main = Instance.new("Frame", gui)
+    main.Size = UDim2.new(0, 250, 0, 350)
+    main.Position = UDim2.new(0, 15, 0, 50)
+    main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    main.BorderSizePixel = 0
+
+    local title = Instance.new("TextLabel", main)
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.Position = UDim2.new(0, 0, 0, 0)
+    title.BackgroundTransparency = 1
+    title.TextColor3 = Color3.new(1, 1, 1)
+    title.Font = Enum.Font.SourceSansBold
+    title.TextSize = 22
+    title.Text = config.Name or "LinuxUI"
+    title.TextStrokeTransparency = 0.7
+
+    local container = Instance.new("ScrollingFrame", main)
+    container.Position = UDim2.new(0, 0, 0, 40)
+    container.Size = UDim2.new(1, 0, 1, -40)
+    container.CanvasSize = UDim2.new(0, 0, 0, 0)
+    container.ScrollBarThickness = 6
+    container.BackgroundTransparency = 1
+    container.BorderSizePixel = 0
+    container.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+    local layout = Instance.new("UIListLayout", container)
+    layout.Padding = UDim.new(0, 8)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    layout.VerticalAlignment = Enum.VerticalAlignment.Top
+
+    local UI = {}
+
+    function UI.Button(text, callback)
+        local btn = Instance.new("TextButton", container)
+        btn.Size = UDim2.new(1, -20, 0, 35)
+        btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        btn.BorderSizePixel = 0
+        btn.Text = text
+        btn.TextColor3 = Color3.new(1, 1, 1)
+        btn.Font = Enum.Font.SourceSansSemibold
+        btn.TextSize = 18
+        btn.AutoButtonColor = false
+
+        btn.MouseEnter:Connect(function()
+            btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        end)
+        btn.MouseLeave:Connect(function()
+            btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        end)
+        btn.MouseButton1Click:Connect(function()
+            callback()
+        end)
+        return btn
+    end
+
+    function UI.Toggle(text, default, callback)
+        local frame = Instance.new("Frame", container)
+        frame.Size = UDim2.new(1, -20, 0, 35)
+        frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        frame.BorderSizePixel = 0
+
+        local label = Instance.new("TextLabel", frame)
+        label.Size = UDim2.new(1, -50, 1, 0)
+        label.Position = UDim2.new(0, 10, 0, 0)
+        label.BackgroundTransparency = 1
+        label.Text = text
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.Font = Enum.Font.SourceSansSemibold
+        label.TextSize = 18
+        label.TextXAlignment = Enum.TextXAlignment.Left
+
+        local toggleBtn = Instance.new("TextButton", frame)
+        toggleBtn.Size = UDim2.new(0, 40, 0, 25)
+        toggleBtn.Position = UDim2.new(1, -50, 0, 5)
+        toggleBtn.BackgroundColor3 = default and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(100, 100, 100)
+        toggleBtn.BorderSizePixel = 0
+        toggleBtn.Text = ""
+        toggleBtn.AutoButtonColor = false
+        toggleBtn.ClipsDescendants = true
+
+        local toggled = default
+
+        local function updateVisual()
+            toggleBtn.BackgroundColor3 = toggled and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(100, 100, 100)
+        end
+
+        toggleBtn.MouseButton1Click:Connect(function()
+            toggled = not toggled
+            updateVisual()
+            callback(toggled)
+        end)
+
+        updateVisual()
+        return frame
+    end
+
+    return UI
+end
+
+return Linux
